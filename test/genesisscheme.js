@@ -1,7 +1,11 @@
 const helpers = require('./helpers')
 const assertJump = require('./zeppelin-solidity/helpers/assertJump');
+const newValueSystem = require('./genesisinit').genesisInit;
+
+
 
 contract('GenesisScheme', function(accounts) {
+<<<<<<< Updated upstream
     
     it("founders should get their share", async function() {    
         // create a value system
@@ -28,33 +32,51 @@ contract('GenesisScheme', function(accounts) {
         var tokenAddress = await controllerInstance.nativeToken();
         var tokenInstance = MintableToken.at(tokenAddress); 
                                                                                             
+=======
+
+    it("founders should get their share", async function() {
+      let genesis = newValueSystem.genesis;
+      var controllerInstance = newValueSystem.controllerInstance;
+      var reputationInstance = newValueSystem.reputationInstance;
+      var tokenInstance = newValueSystem.tokenInstance;
+
+>>>>>>> Stashed changes
         var i;
         for (i = 0 ; i < founders.length ; i++ ) {
            await genesis.collectFoundersShare({'from': founders[i]});
         }
         for (i = 0 ; i < founders.length ; i++ ) {
-            let rep = await reputationInstance.reputationOf(founders[i]); 
-            // let rep = await genesis.controller.nativeReputation().reputationOf(founders[i]);          
+            let rep = await reputationInstance.reputationOf(founders[i]);
+            // let rep = await genesis.controller.nativeReputation().reputationOf(founders[i]);
             assert.equal(rep.valueOf(), repForFounders[i], "founders reputation is not as expected");
-            
+
             let balance = await tokenInstance.balanceOf(founders[i]);
             assert.equal(balance.valueOf(), tokenForFounders[i], "founders token is not as expected");
         }
-        
+
         // check non founder
         await genesis.collectFoundersShare({'from': accounts[4]});
         let rep = await reputationInstance.reputationOf(accounts[4]);
         assert.equal(rep.valueOf(), 0, "founders reputation is not as expected");
-            
+
         let balance = await tokenInstance.balanceOf(accounts[4]);
         assert.equal(balance.valueOf(), 0, "founders reputation is not as expected");
+<<<<<<< Updated upstream
         
+=======
+
+>>>>>>> Stashed changes
     });
 
     it("try to remove genesis scheme", async function() {
         let votingScheme = await SimpleVote.new();
+<<<<<<< Updated upstream
     
         var founders = [accounts[0],accounts[1]];//,accounts[2]];
+=======
+
+        var founders = [accounts[0],accounts[1],accounts[2]];
+>>>>>>> Stashed changes
         var tokenForFounders = [1,2,4];
         var repForFounders = [7,9,12];
         let genesis = await GenesisScheme.new("Shoes factory",
@@ -63,6 +85,7 @@ contract('GenesisScheme', function(accounts) {
                                               tokenForFounders,
                                               repForFounders,
                                               votingScheme.address,
+<<<<<<< Updated upstream
                                               {'start_gas':4900000} );
 
         var i;
@@ -80,6 +103,16 @@ contract('GenesisScheme', function(accounts) {
         var status = await genesis.getVoteStatus(genesisAddress); 
 
         var fail = 100;
+=======
+                                              {'start_gas':4700000} );
+
+        var genesisAddress = genesis.address; //TODO
+        // vote to remove it. The second vote will get majority and throw is expected
+        await genesis.proposeScheme(genesisAddress);
+        await genesis.voteScheme(genesisAddress, true, {'from': founders[0]});
+        var status = await genesis.getVoteStatus(genesisAddress);
+        console.log(status);
+>>>>>>> Stashed changes
 
         try {
           await genesis.voteScheme(genesisAddress, true, {'from': founders[1],'start_gas':4700000});

@@ -22,7 +22,7 @@ contract Reputation is Ownable, SafeMath {
     }
 
     function mint(int256 _amount, address _to) onlyOwner returns (bool) {
-        // create new tokens and add them to the given account
+        // create new reputation score and add them to the given account
         uint absAmount; // allow to reduce reputation also for non owner
         if( _amount >= 0 ) {
             absAmount = uint(_amount);
@@ -32,11 +32,14 @@ contract Reputation is Ownable, SafeMath {
         else {
             absAmount = uint((-1)*_amount);
             totalSupply = safeSub(totalSupply, absAmount);
-            balances[_to] = safeSub(balances[_to], absAmount);        
+            balances[_to] = safeSub(balances[_to], absAmount);
         }
         return true;
     }
 
+
+
+/*  why do we need both mint and setReputation in here? */
     function setReputation(uint256 _amount, address _to) onlyOwner returns (bool) {
         // set the balacne of _to to _amount
         totalSupply = safeAdd(safeSub(totalSupply, balances[_to]),_amount );
